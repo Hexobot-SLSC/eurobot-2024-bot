@@ -59,6 +59,8 @@ void setup() {
   rightGrabberServo.attach(12); // Pin
   rightGrabberServo.write(0);
 
+  Serial.println("Motors setup completed");
+
   // Setup radio
 
   radio.begin();
