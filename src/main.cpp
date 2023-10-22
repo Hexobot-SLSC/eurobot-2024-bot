@@ -150,7 +150,7 @@ void loop() {
     } else if (dataType == 'E') {
       // Electro magnet data
 
-      unsigned char areMagnetEnabled;
+      bool areMagnetEnabled;
 
       radio.read(&areMagnetEnabled, sizeof(areMagnetEnabled));
 
