@@ -111,10 +111,11 @@ void loop() {
 
       radio.read(&data, sizeof(data));
 
-      joystickData.x = data[1];
-      joystickData.y = data[2];
-      joystickData.omniX = data[3];
-      joystickData.omniY = data[4];
+      joystickData.x = data[0];
+      joystickData.y = data[1];
+      joystickData.omniX = data[2];
+      joystickData.omniY = data[3];
+
 
     } else if (dataType == 'S') {
       // Score data
