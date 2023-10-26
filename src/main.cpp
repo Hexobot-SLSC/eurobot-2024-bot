@@ -6,14 +6,10 @@
 
 #define DEFAULT_SCORE 50
 
-const uint64_t readingAddress = 2024134UL;
-const uint64_t writingAddress = 314592654UL;
+const byte readingAddress[6] = "912CR";
+const byte transimittingAddress[6] = "912RC";
 
-const unsigned char electroMagnetPins[3] = {
-  6,
-  7,
-  8
-};
+const unsigned char electroMagnetPins[3] = {2, 3, 4};
 
 TM1637Display scoreDisplay(12, 13); // CLK, DIO
 
@@ -49,15 +45,13 @@ void setup() {
   auto setupRadio = []() {
     radio.begin();
 
-    radio.setChannel(99);
-    radio.setDataRate(RF24_250KBPS);
-    radio.setPALevel(RF24_PA_LOW);
+    radio.setPALevel(RF24_PA_MIN);
+    radio.openWritingPipe(transimittingAddress); // address
     radio.openReadingPipe(0, readingAddress); // address
-    radio.openWritingPipe(writingAddress); // address
   };
 
   auto connectToControllerAsync = []() {
-    const unsigned char connectionMessage = '!';
+    const char connectionMessage = '!';
 
     while (true) {
       radio.stopListening();
@@ -69,7 +63,7 @@ void setup() {
       delay(1000);
 
       while (radio.available()) {
-        unsigned char data;
+        char data;
 
         radio.read(&data, sizeof(data));
         
@@ -110,7 +104,7 @@ void setup() {
 
   Serial.println("Initialization completed!");
 
-  Serial.println("Attempting to connect to robot...");
+  Serial.println("Attempting to connect to controller...");
   connectToControllerAsync();
   Serial.println("Controller connected!");
 
