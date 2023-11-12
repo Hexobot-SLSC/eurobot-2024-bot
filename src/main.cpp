@@ -5,29 +5,28 @@
 #include <Servo.h>
 
 #define DEFAULT_SCORE 50
+#define ELECTRO_MAGNETS_COUNT 3
 
-const byte readingAddress[6] = "912CR";
-const byte transimittingAddress[6] = "912RC";
-
-const unsigned char electroMagnetPins[3] = {2, 3, 4};
+const byte electroMagnetPins[ELECTRO_MAGNETS_COUNT] = {2, 3, 4};
 
 TM1637Display scoreDisplay(12, 13); // CLK, DIO
 
 RF24 radio(9, 53); // CE, CSN
 
-Servo horizontalServo;
-Servo leftGrabberServo;
-Servo rightGrabberServo;
+Servo grabberHeightServo;
+Servo grabberOpeningServo;
+Servo rodServo;
+Servo pushersServos[2];
 
-struct JOYSTICK_DATA {
-  // First joystick
-  char x;
-  char y;
+typedef struct JoystickData {
+  // Classic joystick
+  byte x;
+  byte y;
 
-  // Second joystick
-  char omniX;
-  char omniY;
-};
+  // Holonom joystick
+  byte holonomX;
+  byte holonomY;
+}JoystickData;
 
 void setup() {
   // Setup Serial
@@ -36,42 +35,19 @@ void setup() {
 
   Serial.println("Setup in progress...");
 
- auto setupDisplay = []() {
+ auto setupScoreDisplay = []() {
     const uint8_t middleBar[1] = {SEG_G};
     scoreDisplay.setBrightness(0x0f);
     scoreDisplay.setSegments(middleBar, 4, 0);
   };
 
   auto setupRadio = []() {
+    const byte readingAddress[6] = "912CR";
+
     radio.begin();
 
     radio.setPALevel(RF24_PA_MIN);
-    radio.openWritingPipe(transimittingAddress); // address
     radio.openReadingPipe(0, readingAddress); // address
-  };
-
-  auto connectToControllerAsync = []() {
-    const char connectionMessage = '!';
-
-    while (true) {
-      radio.stopListening();
-
-      radio.write(&connectionMessage, sizeof(connectionMessage));
-
-      radio.startListening();
-
-      delay(1000);
-
-      while (radio.available()) {
-        char data;
-
-        radio.read(&data, sizeof(data));
-        
-        if (data != '!') continue;
-
-        return;
-      };
-    }
   };
 
   auto setupComponents = []() {
@@ -79,99 +55,133 @@ void setup() {
       pinMode(electroMagnetPins[i], OUTPUT);
     }
 
-    horizontalServo.attach(10); // Pin
-    horizontalServo.write(0);
+    grabberHeightServo.attach(10); // Pin
+    grabberHeightServo.write(0);
 
-    leftGrabberServo.attach(11); // Pin
-    leftGrabberServo.write(0);
+    grabberOpeningServo.attach(11); // Pin
+    grabberOpeningServo.write(0);
 
-    rightGrabberServo.attach(12); // Pin
-    rightGrabberServo.write(0);
+    pushersServos[0].attach(12);
+    pushersServos[0].write(0);
+
+    pushersServos[1].attach(13);
+    pushersServos[1].write(0);
+
+    for (byte i = 0; i < ELECTRO_MAGNETS_COUNT; ++i) digitalWrite(electroMagnetPins[i], LOW);
   };
 
   Serial.begin(9600);
 
   Serial.println("Setup in progress...");
 
-  setupDisplay();
+  setupScoreDisplay();
   Serial.println("Display setup completed");
-
-  setupRadio();
-  Serial.println("Radio setup completed");
-
+  
   setupComponents();
   Serial.println("Components setup completed");
 
-  Serial.println("Initialization completed!");
-
-  Serial.println("Attempting to connect to controller...");
-  connectToControllerAsync();
-  Serial.println("Controller connected!");
-
-  scoreDisplay.showNumberDec(DEFAULT_SCORE, false, 4, 0);
+  setupRadio();
+  Serial.println("Radio setup completed");
 
   Serial.println("Robot ready!");
 }
 
 void loop() {
   if (radio.available()) {
-    char dataType;
+    byte dataType;
 
     radio.read(&dataType, sizeof(dataType));
 
-    if (dataType == 'J') {
-      // Joystick data
+    switch (dataType) {
+      case 'J': {
+        // Joystick data
 
-      short data[4];
-      JOYSTICK_DATA joystickData;
+        JoystickData joystickData;
 
-      radio.read(&data, sizeof(data));
+        while (!(radio.available())) delay(0.05);
 
-      joystickData.x = data[0];
-      joystickData.y = data[1];
-      joystickData.omniX = data[2];
-      joystickData.omniY = data[3];
+        radio.read(&joystickData, sizeof(joystickData));
 
-      // TODO: Implement joystick data
-    } else if (dataType == 'S') {
-      // Score data
-      
-      char score;
+        // TODO: Implement joystick data
+        break;
+      }
+      case 'S': {
+        // Score data
+        
+        byte score;
 
-      radio.read(&score, sizeof(score));
+        while (!(radio.available())) delay(0.05);
 
-      scoreDisplay.showNumberDec(score);
-    } else if (dataType == 'H') {
-      // Horizontal servo data
+        radio.read(&score, sizeof(score));
 
-      unsigned char servoAngle;
+        scoreDisplay.showNumberDec(score);
+        break;
+      }
+      case 'H': {
+        // Grabber height servo data
 
-      radio.read(&servoAngle, sizeof(servoAngle));
-    } else if (dataType == 'L') {
-      // Left grabber servo data
+        byte servoAngle;
 
-      unsigned char servoAngle;
+        while (!(radio.available())) delay(0.05);
 
-      radio.read(&servoAngle, sizeof(servoAngle));
+        radio.read(&servoAngle, sizeof(servoAngle));
 
-      leftGrabberServo.write(servoAngle);
-    } else if (dataType == 'R') {
-      // Right grabber servo data
+        grabberHeightServo.write(servoAngle);
+        break;
+      }
+      case 'O': {
+        // Grabber opening servo data
 
-      unsigned char servoAngle;
+        byte servoAngle;
 
-      radio.read(&servoAngle, sizeof(servoAngle));
+        while (!(radio.available())) delay(0.05);
 
-      rightGrabberServo.write(servoAngle);
-    } else if (dataType == 'E') {
+        radio.read(&servoAngle, sizeof(servoAngle));
+
+        grabberOpeningServo.write(servoAngle);
+        break;
+      }
+      case 'R': {
+        // Rod servo data
+
+        bool isRodDeployed;
+
+        while (!(radio.available())) delay(0.05);
+
+        radio.read(&isRodDeployed, sizeof(isRodDeployed));
+
+        rodServo.write((isRodDeployed && 180) || 0);
+        break;
+      }
+      case 'M': {
       // Electro magnet data
 
-      bool areMagnetEnabled;
+        bool areMagnetEnabled;
 
-      radio.read(&areMagnetEnabled, sizeof(areMagnetEnabled));
+        while (!(radio.available())) delay(0.05);
 
-      for (unsigned char i = 0; i < 3; ++i) {
-        digitalWrite(electroMagnetPins[i], areMagnetEnabled);
+        radio.read(&areMagnetEnabled, sizeof(areMagnetEnabled));
+
+        for (unsigned char i = 0; i < 3; ++i) digitalWrite(electroMagnetPins[i], areMagnetEnabled);
+        break;
+      }
+      case 'P': {
+        // Pushers servo data
+
+        bool isEnabled;
+
+        while (!(radio.available())) delay(0.05);
+
+        radio.read(&isEnabled, sizeof(isEnabled));
+
+        pushersServos[0].write((isEnabled && 180) || 0);
+        pushersServos[1].write((isEnabled && 0) || 180);
+        break;
+      }
+      default: {
+        Serial.println("Unknown data type");
+        Serial.print(dataType);
+        break;
       }
     }
   }
