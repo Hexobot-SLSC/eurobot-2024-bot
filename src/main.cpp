@@ -28,6 +28,39 @@ typedef struct JoystickData {
   byte holonomY;
 }JoystickData;
 
+typedef struct RadioData {
+  struct JoystickData joystickData;
+  
+  byte grabberHeight;
+  byte grabberOpeningAngle;
+
+  byte score;
+
+  bool areMagnetsEnabled;
+  bool isRodDeployed;
+  bool isRightPusherDeployed;
+  bool isLeftPusherDeployed;
+}RadioData;
+
+RadioData lastReceivedData = {
+  .joystickData = {
+    .x = 0,
+    .y = 0,
+    .holonomX = 0,
+    .holonomY = 0
+  },
+  .grabberHeight = 0,
+  .grabberOpeningAngle = 0,
+  .score = 0,
+  .areMagnetsEnabled = false,
+  .isRodDeployed = false,
+  .isRightPusherDeployed = false,
+  .isLeftPusherDeployed = false
+};
+
+void getData(struct RadioData *dataBuffer);
+void applyDataUpdates(struct RadioData *newData);
+
 void setup() {
   // Setup Serial
 
@@ -83,106 +116,55 @@ void setup() {
   setupRadio();
   Serial.println("Radio setup completed");
 
+  radio.flush_rx();
+
   Serial.println("Robot ready!");
 }
 
 void loop() {
-  if (radio.available()) {
-    byte dataType;
+  delay(20);
+  if (!(radio.available())) return;
 
-    radio.read(&dataType, sizeof(dataType));
+  RadioData receivedData;
 
-    switch (dataType) {
-      case 'J': {
-        // Joystick data
+  getData(&receivedData);
+  applyDataUpdates(&receivedData);
 
-        JoystickData joystickData;
+  lastReceivedData = receivedData;
+}
 
-        while (!(radio.available())) delay(0.05);
+void getData(struct RadioData *dataBuffer) {
+  radio.read(&dataBuffer, sizeof(&dataBuffer));
+}
 
-        radio.read(&joystickData, sizeof(joystickData));
+void applyDataUpdates(struct RadioData *newData) {
+  if (newData->score != lastReceivedData.score) {
+    scoreDisplay.showNumberDec(newData->score);
+  }
 
-        // TODO: Implement joystick data
-        break;
-      }
-      case 'S': {
-        // Score data
-        
-        byte score;
+  if (newData->grabberHeight != lastReceivedData.grabberHeight) {
+    grabberHeightServo.write(newData->grabberHeight);
+  }
 
-        while (!(radio.available())) delay(0.05);
+  if (newData->grabberOpeningAngle != lastReceivedData.grabberOpeningAngle) {
+    grabberOpeningServo.write(newData->grabberOpeningAngle);
+  }
 
-        radio.read(&score, sizeof(score));
+  if (newData->isRodDeployed != lastReceivedData.isRodDeployed) {
+    rodServo.write(newData->isRodDeployed ? 180 : 0);
+  }
 
-        scoreDisplay.showNumberDec(score);
-        break;
-      }
-      case 'H': {
-        // Grabber height servo data
+  if (newData->isLeftPusherDeployed != lastReceivedData.isLeftPusherDeployed) {
+    pushersServos[0].write(newData->isLeftPusherDeployed ? 180 : 0);
+  }
 
-        byte servoAngle;
+  if (newData->isRightPusherDeployed != lastReceivedData.isRightPusherDeployed) {
+    pushersServos[1].write(newData->isRightPusherDeployed ? 180 : 0);
+  }
 
-        while (!(radio.available())) delay(0.05);
-
-        radio.read(&servoAngle, sizeof(servoAngle));
-
-        grabberHeightServo.write(servoAngle);
-        break;
-      }
-      case 'O': {
-        // Grabber opening servo data
-
-        byte servoAngle;
-
-        while (!(radio.available())) delay(0.05);
-
-        radio.read(&servoAngle, sizeof(servoAngle));
-
-        grabberOpeningServo.write(servoAngle);
-        break;
-      }
-      case 'R': {
-        // Rod servo data
-
-        bool isRodDeployed;
-
-        while (!(radio.available())) delay(0.05);
-
-        radio.read(&isRodDeployed, sizeof(isRodDeployed));
-
-        rodServo.write((isRodDeployed && 180) || 0);
-        break;
-      }
-      case 'M': {
-      // Electro magnet data
-
-        bool areMagnetEnabled;
-
-        while (!(radio.available())) delay(0.05);
-
-        radio.read(&areMagnetEnabled, sizeof(areMagnetEnabled));
-
-        for (unsigned char i = 0; i < 3; ++i) digitalWrite(electroMagnetPins[i], areMagnetEnabled);
-        break;
-      }
-      case 'P': {
-        // Pushers servo data
-
-        bool isEnabled;
-
-        while (!(radio.available())) delay(0.05);
-
-        radio.read(&isEnabled, sizeof(isEnabled));
-
-        pushersServos[0].write((isEnabled && 180) || 0);
-        pushersServos[1].write((isEnabled && 0) || 180);
-        break;
-      }
-      default: {
-        Serial.println("Unknown data type");
-        Serial.print(dataType);
-        break;
-      }
+  if (newData->areMagnetsEnabled != lastReceivedData.areMagnetsEnabled) {
+    for (byte i = 0; i < ELECTRO_MAGNETS_COUNT; ++i) {
+      digitalWrite(electroMagnetPins[i], newData->areMagnetsEnabled ? HIGH : LOW);
     }
   }
 }
