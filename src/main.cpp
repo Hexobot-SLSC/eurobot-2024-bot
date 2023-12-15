@@ -3,6 +3,8 @@
 #include <RF24.h>
 #include <TM1637Display.h>
 #include <Servo.h>
+#include <SabertoothSimplified.h>
+#include <SoftwareSerial.h>
 
 #define DEFAULT_SCORE 50
 #define ELECTRO_MAGNETS_COUNT 3
@@ -12,6 +14,10 @@ const byte electroMagnetPins[ELECTRO_MAGNETS_COUNT] = {2, 3, 4};
 TM1637Display scoreDisplay(12, 13); // CLK, DIO
 
 RF24 radio(9, 53); // CE, CSN
+
+SoftwareSerial sabertoothRightSerial(NOT_A_PIN, 18); // RX, TX
+SabertoothSimplified sabertoothRight(sabertoothRightSerial);
+SabertoothSimplified sabertoothLeft;
 
 Servo grabberHeightServo;
 Servo grabberOpeningServo;
@@ -26,7 +32,7 @@ typedef struct JoystickData {
   // Holonom joystick
   byte holonomX;
   byte holonomY;
-}JoystickData;
+} JoystickData;
 
 typedef struct RadioData {
   struct JoystickData joystickData;
@@ -40,7 +46,7 @@ typedef struct RadioData {
   bool isRodDeployed;
   bool isRightPusherDeployed;
   bool isLeftPusherDeployed;
-}RadioData;
+} RadioData;
 
 RadioData lastReceivedData = {
   .joystickData = {
@@ -58,8 +64,10 @@ RadioData lastReceivedData = {
   .isLeftPusherDeployed = false
 };
 
-void getData(struct RadioData *dataBuffer);
-void applyDataUpdates(struct RadioData *newData);
+void getData(RadioData *dataBuffer);
+void applyDataUpdates(RadioData *newData);
+void updateMotors(RadioData *newData);
+bool areJoysticksDifferent(JoystickData *first, JoystickData *second);
 
 void setup() {
   // Setup Serial
@@ -94,10 +102,10 @@ void setup() {
     grabberOpeningServo.attach(11); // Pin
     grabberOpeningServo.write(0);
 
-    pushersServos[0].attach(12);
+    pushersServos[0].attach(12); // Pin
     pushersServos[0].write(0);
 
-    pushersServos[1].attach(13);
+    pushersServos[1].attach(13); // Pin
     pushersServos[1].write(0);
 
     for (byte i = 0; i < ELECTRO_MAGNETS_COUNT; ++i) digitalWrite(electroMagnetPins[i], LOW);
@@ -123,6 +131,7 @@ void setup() {
 
 void loop() {
   delay(20);
+
   if (!(radio.available())) return;
 
   RadioData receivedData;
@@ -133,21 +142,21 @@ void loop() {
   lastReceivedData = receivedData;
 }
 
-void getData(struct RadioData *dataBuffer) {
+void getData(RadioData *dataBuffer) {
   radio.read(&dataBuffer, sizeof(&dataBuffer));
 }
 
-void applyDataUpdates(struct RadioData *newData) {
+void applyDataUpdates(RadioData *newData) {
   if (newData->score != lastReceivedData.score) {
     scoreDisplay.showNumberDec(newData->score);
   }
 
   if (newData->grabberHeight != lastReceivedData.grabberHeight) {
-    grabberHeightServo.write(newData->grabberHeight);
+    grabberHeightServo.write(map(newData->grabberHeight, 0, 255, 0, 180));
   }
 
   if (newData->grabberOpeningAngle != lastReceivedData.grabberOpeningAngle) {
-    grabberOpeningServo.write(newData->grabberOpeningAngle);
+    grabberOpeningServo.write(map(newData->grabberOpeningAngle, 0, 255, 0, 180));
   }
 
   if (newData->isRodDeployed != lastReceivedData.isRodDeployed) {
@@ -167,4 +176,26 @@ void applyDataUpdates(struct RadioData *newData) {
       digitalWrite(electroMagnetPins[i], newData->areMagnetsEnabled ? HIGH : LOW);
     }
   }
+
+  if (!(areJoysticksDifferent(&newData->joystickData, &lastReceivedData.joystickData))) return;
+
+  updateMotors(newData);
+}
+
+bool areJoysticksDifferent(JoystickData *first, JoystickData *second) {
+  return first->x != second->x || first->y != second->y || first->holonomX != second->holonomX || first->holonomY != second->holonomY;
+}
+
+void updateMotors(RadioData *newData) {
+  short theta = degrees(atan2(newData->joystickData.holonomY, newData->joystickData.holonomX));
+  short thetaCos = cos(theta - PI / 4);
+  short thetaSin = sin(theta - PI / 4);
+  short maxValue = max(abs(thetaCos), abs(thetaSin));
+
+  short turnValue = map(newData->joystickData.x, 0, 255, -25, 25);
+
+  sabertoothLeft.motor(0, thetaCos / maxValue * 100 + turnValue);
+  sabertoothLeft.motor(1, thetaSin / maxValue * 100 - turnValue); 
+  sabertoothRight.motor(0, thetaCos / maxValue * 100 + turnValue);
+  sabertoothRight.motor(1, thetaSin / maxValue * 100 - turnValue);
 }
