@@ -9,7 +9,7 @@
 #define DEBUG_STATE
 
 /* Enable or disable test sequence.
-/!\ MUST BE DISABLED BEFORE NORMAL USAGE /!\ */
+Must be disabled for normal usage */
 #define TEST_MODE
 
 /* The default score to display on the robot.
@@ -21,6 +21,9 @@ Should be sync with the one on the controller.
 ----------------------------------------------------------------
 /!\ THIS IS A CRITICAL SETTING. DO NOT SET WITHOUT KNOWLEDGE /!\.
 The lower it is set the higher the power consumption will be.
+Making the delay too high will make the robot unresponsive.
+Making the delay too low will make the robot consume too much power and
+risks devices damages and power supply issues.
 ----------------------------------------------------------------
 Cannot disable. */
 #define HEARTBEAT_DELAY 30
@@ -190,7 +193,7 @@ void loop() {
 
   remote.fetch(&receivedData);
 
-  applyDataChanges();
+  applyDataChanges(&receivedData);
 
   currentData = receivedData;
 }

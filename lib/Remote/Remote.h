@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <RF24.h>
+#include <DataStructures.h>
 
 class Remote {
     public:
