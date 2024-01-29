@@ -1,5 +1,5 @@
-#ifndef ScoreDisplay_h
-#define ScoreDisplay_h
+#ifndef __SCOREDISPLAY_H__
+#define __SCOREDISPLAY_H__
 
 #include <Arduino.h>
 #include <TM1637Display.h>

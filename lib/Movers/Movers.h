@@ -1,5 +1,5 @@
-#ifndef Movers_h
-#define Movers_h
+#ifndef __MOVERS_H__
+#define __MOVERS_H__
 
 #include <Arduino.h>
 #include <Remote.h>

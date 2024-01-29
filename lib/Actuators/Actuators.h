@@ -1,5 +1,5 @@
-#ifndef Actuators_h
-#define Actuators_h
+#ifndef __ACTUATORS_H__
+#define __ACTUATORS_H__
 
 #include <Arduino.h>
 #include <Servo.h>

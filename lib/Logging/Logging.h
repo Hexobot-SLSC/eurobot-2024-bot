@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#ifndef Logging_h
-#define Logging_h
+#ifndef __LOGGING_H__
+#define __LOGGING_H__
 
 #ifdef INFO_STATE
 // format and ouput to serial an info message

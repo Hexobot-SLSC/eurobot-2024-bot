@@ -1,5 +1,5 @@
-#ifndef Remote_h
-#define Remote_h
+#ifndef __REMOTE_H__
+#define __REMOTE_H__
 
 #include <Arduino.h>
 #include <RF24.h>
