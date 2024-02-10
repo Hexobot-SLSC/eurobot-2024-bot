@@ -7,7 +7,6 @@
 
 class Actuators {
     private:
-        byte magnetsPin;
         Servo pushersServos[2];
         Servo rodServo;
         Servo grabberHeightServo;
@@ -16,6 +15,9 @@ class Actuators {
         Actuators();
 
         void setup();
+        void setPusherL(byte angle);
+        void setPusherR(byte angle);
+        void reset();
         void update(RadioData *radioData, RadioData *currentData);
 };
 

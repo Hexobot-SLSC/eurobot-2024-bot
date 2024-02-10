@@ -16,18 +16,19 @@ Actuators actuators;
 RadioData currentData = {
   .joystickData = {
     .x = 0,
-    .y = 0,
     .holonomX = 0,
     .holonomY = 0
   },
-  .grabberHeight = 0,
-  .grabberOpeningAngle = 0,
-  .score = 0,
-  .areMagnetsEnabled = false,
-  .isRodDeployed = false,
-  .isRightPusherDeployed = false,
-  .isLeftPusherDeployed = false
+  // .grabberHeight = 0,
+  // .grabberOpeningAngle = 0,
+  // .score = 0,
+  // .areMagnetsEnabled = false,
+  // .isRodDeployed = false,
+  // .isRightPusherDeployed = false,
+  // .isLeftPusherDeployed = false
 };
+
+unsigned long lastNoDataTimestamp = 0;
 
 void applyDataChanges(RadioData *newData);
 bool areJoysticksDifferent(JoystickData *first, JoystickData *second);
@@ -61,14 +62,30 @@ void setup() {
 
   #ifdef TEST_MODE
   log("Running Test Mode");
-  while(true) run_test(&movers);
+  while(true) run_test(&movers, &actuators);
   #endif
 }
 
 void loop() {
   delay(HEARTBEAT_DELAY);
 
-  if (!(remote.hasData())) return;
+  //debug("Checking for data...")
+
+  if (!(remote.hasData())) {
+    if (lastNoDataTimestamp == 0) {
+      lastNoDataTimestamp = millis();
+    }
+
+    if (millis() - lastNoDataTimestamp > RADIO_TIMEOUT) {
+      debug("No data received for too long. Stopping robot.");
+      movers.stop();
+      actuators.reset();
+      lastNoDataTimestamp = 0;
+    }
+    return;
+  }
+
+  lastNoDataTimestamp = 0;
 
   RadioData receivedData;
 
@@ -80,9 +97,11 @@ void loop() {
 }
 
 void applyDataChanges(RadioData *newData) {
-  if (newData->score != currentData.score) {
-    scoreDisplay.update(newData->score);
-  }
+  // if (newData->score != currentData.score) {
+  //   scoreDisplay.update(newData->score);
+  // }
+
+  actuators.update(newData, &currentData);
 
   if (!(areJoysticksDifferent(&newData->joystickData, &currentData.joystickData))) return;
 
@@ -90,5 +109,5 @@ void applyDataChanges(RadioData *newData) {
 }
 
 bool areJoysticksDifferent(JoystickData *first, JoystickData *second) {
-  return first->x != second->x || first->y != second->y || first->holonomX != second->holonomX || first->holonomY != second->holonomY;
+  return first->x != second->x || first->holonomX != second->holonomX || first->holonomY != second->holonomY;
 }

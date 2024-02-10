@@ -3,7 +3,8 @@
 
 #include <Arduino.h>
 #include <Movers.h>
+#include <Actuators.h>
 
-void run_test(Movers *movers);
+void run_test(Movers *movers, Actuators *actuators);
 
 #endif

@@ -1,14 +1,15 @@
 #include <TestSequence.h>
 #include <Logging.h>
 #include <Movers.h>
+#include <Actuators.h>
 
-void run_test(Movers *movers) {
+void run_test(Movers *movers, Actuators *actuators) {
   debug("Going forward");
 
-  movers->setFR(40);
-  movers->setFL(40);
-  movers->setBR(40);
-  movers->setBL(40);
+  movers->setFR(50);
+  movers->setFL(50);
+  movers->setBR(50);
+  movers->setBL(50);
 
   delay(2500);
 
@@ -20,10 +21,10 @@ void run_test(Movers *movers) {
 
   debug("Going backwards");
 
-  movers->setFR(-40);
-  movers->setFL(-40);
-  movers->setBR(-40);
-  movers->setBL(-40);
+  movers->setFR(-50);
+  movers->setFL(-50);
+  movers->setBR(-50);
+  movers->setBL(-50);
 
   delay(2500);
 
@@ -35,10 +36,10 @@ void run_test(Movers *movers) {
 
   debug("Turn left");
 
-  movers->setFR(-40);
-  movers->setFL(-40);
-  movers->setBR(40);
-  movers->setBL(40);
+  movers->setFR(-50);
+  movers->setBR(-50);
+  movers->setFL(50);
+  movers->setBL(50);
 
   delay(2500);
 
@@ -50,10 +51,10 @@ void run_test(Movers *movers) {
 
   debug("Turn right");
 
-  movers->setFR(40);
-  movers->setFL(40);
-  movers->setBR(-40);
-  movers->setBL(-40);
+  movers->setFR(50);
+  movers->setBR(50);
+  movers->setFL(-50);
+  movers->setBL(-50);
 
   delay(2500);
 
@@ -67,8 +68,8 @@ void run_test(Movers *movers) {
 
   movers->setFR(-90);
   movers->setFL(90);
-  movers->setBR(-90);
-  movers->setBL(90);
+  movers->setBR(90);
+  movers->setBL(-90);
 
   delay(2500);
   
@@ -76,8 +77,8 @@ void run_test(Movers *movers) {
 
   movers->setFR(90);
   movers->setFL(-90);
-  movers->setBR(90);
-  movers->setBL(-90);
+  movers->setBR(-90);
+  movers->setBL(90);
 
   delay(2500);
 
@@ -85,7 +86,21 @@ void run_test(Movers *movers) {
 
   movers->stop();
 
-  delay(8000);
+  delay(2500);
+
+  debug("Servos")
+  
+  actuators->setPusherL(30);
+  delay(1000);
+  actuators->setPusherL(160);
+  delay(1000);
+
+  actuators->setPusherR(30);
+  delay(1000);
+  actuators->setPusherR(160);
+  delay(1000);
+  
+  delay(4000);
 
   log("Test ended");
 }

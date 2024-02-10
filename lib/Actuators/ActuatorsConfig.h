@@ -1,0 +1,13 @@
+#ifndef ACTUATORS_CONFIG_H
+#define ACTUATORS_CONFIG_H
+
+#include <Arduino.h>
+
+#define ROD_SERVO_PIN 99
+#define GRABBER_HEIGHT_SERVO_PIN 99
+#define GRABBER_OPENING_SERVO_PIN 99
+#define LEFT_PUSHER_SERVO_PIN 9
+#define RIGHT_PUSHER_SERVO_PIN 10
+#define MAGNETS_PIN 99
+
+#endif

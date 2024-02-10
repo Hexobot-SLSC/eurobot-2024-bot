@@ -5,6 +5,9 @@
 
 /* Add // before #define to disable a setting. */
 
+/* Delay before freezing the bot when none data is received from radio */
+#define RADIO_TIMEOUT 1000
+
 /* Define wether to enable info logs or not. */
 #define INFO_STATE
 
@@ -14,6 +17,9 @@
 /* Enable or disable test sequence.
 Must be disabled for normal usage */
 //#define TEST_MODE
+
+/* Pourcentage of power for mover motors*/
+#define MOVERS_POWER_PRCT 70.0
 
 /* The default score to display on the robot.
 Cannot disable. */
@@ -29,7 +35,7 @@ Making the delay too low will make the robot consume too much power and
 risks devices damages and power supply issues.
 ----------------------------------------------------------------
 Cannot disable. */
-#define HEARTBEAT_DELAY 30
+#define HEARTBEAT_DELAY 50
 
 // END USER DEFINED //
 

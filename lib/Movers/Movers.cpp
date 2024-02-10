@@ -3,10 +3,14 @@
 #include <SabertoothSimplified.h>
 #include <DataStructures.h>
 #include <SoftwareSerial.h>
+#include <Logging.h>
+#include <Config.h>
+
+const char MOTORS_POWER (MOVERS_POWER_PRCT / 100.0 * 127);
 
 Movers::Movers():
-    sabertoothRightSerial(NOT_A_PIN, 16),
-    sabertoothLeftSerial(NOT_A_PIN, 18),
+    sabertoothRightSerial(NOT_A_PIN, 18),
+    sabertoothLeftSerial(NOT_A_PIN, 16),
     sabertoothRight(sabertoothRightSerial),
     sabertoothLeft(sabertoothLeftSerial) {}
 
@@ -16,17 +20,14 @@ void Movers::setup() {
 }
 
 void Movers::drive(JoystickData *joystickData) {
-    short theta = degrees(atan2(joystickData->holonomY, joystickData->holonomX));
-    short thetaCos = cos(theta - PI / 4);
-    short thetaSin = sin(theta - PI / 4);
-    short maxValue = max(abs(thetaCos), abs(thetaSin));
+    char speed = map(joystickData->holonomY, 0, 255, -MOTORS_POWER, MOTORS_POWER);
+    char turn = -map(joystickData->x, 0, 255, -MOTORS_POWER, MOTORS_POWER);
+    char strafe = map(joystickData->holonomX, 0, 255, -MOTORS_POWER, MOTORS_POWER);
 
-    short turnValue = map(joystickData->x, 0, 255, -40, 40);
-
-    sabertoothLeft.motor(1, thetaCos / maxValue * 100 + turnValue);
-    sabertoothLeft.motor(2, thetaSin / maxValue * 100 - turnValue); 
-    sabertoothRight.motor(1, thetaCos / maxValue * 100 + turnValue);
-    sabertoothRight.motor(2, thetaSin / maxValue * 100 - turnValue);
+    this->setFR((speed - turn * 0.8 - strafe * 1.45) / 2);
+    this->setFL((speed + turn * 0.8 + strafe * 1.45) / 2);
+    this->setBR((speed - turn * 0.8 + strafe * 1.45) / 2);
+    this->setBL((speed + turn * 0.8 - strafe * 1.45) / 2);
 }
 
 
