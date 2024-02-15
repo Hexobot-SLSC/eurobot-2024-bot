@@ -6,7 +6,7 @@
 
 class ScoreDisplay {
     private:
-        TM1637Display display;
+        static TM1637Display display;
     public:
         ScoreDisplay();
 

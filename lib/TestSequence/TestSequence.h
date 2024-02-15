@@ -5,6 +5,6 @@
 #include <Movers.h>
 #include <Actuators.h>
 
-void run_test(Movers *movers, Actuators *actuators);
+void run_test(Movers movers, Actuators actuators);
 
 #endif

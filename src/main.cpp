@@ -30,8 +30,8 @@ RadioData currentData = {
 
 unsigned long lastNoDataTimestamp = 0;
 
-void applyDataChanges(RadioData *newData);
-bool areJoysticksDifferent(JoystickData *first, JoystickData *second);
+void applyDataChanges(RadioData newData);
+bool areJoysticksDifferent(JoystickData firstJoystick, JoystickData secondJoystick);
 void testLoop();
 
 void setup() {
@@ -57,7 +57,7 @@ void setup() {
   log("Robot ready!");
 
   #ifdef DEBUG_STATE
-  remote.print_details();
+  remote.printDetails();
   #endif
 
   #ifdef TEST_MODE
@@ -91,23 +91,23 @@ void loop() {
 
   remote.fetch(&receivedData);
 
-  applyDataChanges(&receivedData);
+  applyDataChanges(receivedData);
 
   currentData = receivedData;
 }
 
-void applyDataChanges(RadioData *newData) {
+void applyDataChanges(RadioData newData) {
   // if (newData->score != currentData.score) {
   //   scoreDisplay.update(newData->score);
   // }
 
-  actuators.update(newData, &currentData);
+  actuators.update(newData, currentData);
 
-  if (!(areJoysticksDifferent(&newData->joystickData, &currentData.joystickData))) return;
+  if (!(areJoysticksDifferent(newData.joystickData, currentData.joystickData))) return;
 
-  movers.drive(&newData->joystickData);
+  movers.drive(newData.joystickData);
 }
 
-bool areJoysticksDifferent(JoystickData *first, JoystickData *second) {
-  return first->x != second->x || first->holonomX != second->holonomX || first->holonomY != second->holonomY;
+bool areJoysticksDifferent(JoystickData firstJoystick, JoystickData secondJoystick) {
+  return firstJoystick.x != secondJoystick.x || firstJoystick.holonomX != secondJoystick.holonomX || firstJoystick.holonomY != secondJoystick.holonomY;
 }

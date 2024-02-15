@@ -1,24 +1,28 @@
 #ifndef __ACTUATORS_H__
 #define __ACTUATORS_H__
 
-#include <Arduino.h>
 #include <Servo.h>
 #include <DataStructures.h>
 
+enum PusherState {
+  RETRACTED,
+  DEPLOYED
+};
+
 class Actuators {
     private:
-        Servo pushersServos[2];
-        Servo rodServo;
-        Servo grabberHeightServo;
-        Servo grabberOpeningServo;
+        static Servo pushersServos[2];
+        static Servo rodServo;
+        static Servo grabberHeightServo;
+        static Servo grabberOpeningServo;
     public:
         Actuators();
 
         void setup();
-        void setPusherL(byte angle);
-        void setPusherR(byte angle);
+        void setPusherL(PusherState state);
+        void setPusherR(PusherState state);
         void reset();
-        void update(RadioData *radioData, RadioData *currentData);
+        void update(RadioData radioData, RadioData currentData);
 };
 
 #endif

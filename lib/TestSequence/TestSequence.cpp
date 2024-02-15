@@ -3,101 +3,101 @@
 #include <Movers.h>
 #include <Actuators.h>
 
-void run_test(Movers *movers, Actuators *actuators) {
+void run_test(Movers movers, Actuators actuators) {
   debug("Going forward");
 
-  movers->setFR(50);
-  movers->setFL(50);
-  movers->setBR(50);
-  movers->setBL(50);
+  movers.setFR(50);
+  movers.setFL(50);
+  movers.setBR(50);
+  movers.setBL(50);
 
   delay(2500);
 
   debug("Stop");
 
-  movers->stop();
+  movers.stop();
 
   delay(2000);
 
   debug("Going backwards");
 
-  movers->setFR(-50);
-  movers->setFL(-50);
-  movers->setBR(-50);
-  movers->setBL(-50);
+  movers.setFR(-50);
+  movers.setFL(-50);
+  movers.setBR(-50);
+  movers.setBL(-50);
 
   delay(2500);
 
   debug("Stop");
 
-  movers->stop();
+  movers.stop();
 
   delay(2000);
 
   debug("Turn left");
 
-  movers->setFR(-50);
-  movers->setBR(-50);
-  movers->setFL(50);
-  movers->setBL(50);
+  movers.setFR(-50);
+  movers.setBR(-50);
+  movers.setFL(50);
+  movers.setBL(50);
 
   delay(2500);
 
   debug("Stop");
 
-  movers->stop();
+  movers.stop();
 
   delay(2000);
 
   debug("Turn right");
 
-  movers->setFR(50);
-  movers->setBR(50);
-  movers->setFL(-50);
-  movers->setBL(-50);
+  movers.setFR(50);
+  movers.setBR(50);
+  movers.setFL(-50);
+  movers.setBL(-50);
 
   delay(2500);
 
   debug("Stop");
 
-  movers->stop();
+  movers.stop();
 
   delay(2000);
 
   debug("Pan right");
 
-  movers->setFR(-90);
-  movers->setFL(90);
-  movers->setBR(90);
-  movers->setBL(-90);
+  movers.setFR(-90);
+  movers.setFL(90);
+  movers.setBR(90);
+  movers.setBL(-90);
 
   delay(2500);
   
   debug("Pan left");
 
-  movers->setFR(90);
-  movers->setFL(-90);
-  movers->setBR(-90);
-  movers->setBL(90);
+  movers.setFR(90);
+  movers.setFL(-90);
+  movers.setBR(-90);
+  movers.setBL(90);
 
   delay(2500);
 
   debug("Stop");
 
-  movers->stop();
+  movers.stop();
 
   delay(2500);
 
   debug("Servos")
   
-  actuators->setPusherL(30);
+  actuators.setPusherL(RETRACTED);
   delay(1000);
-  actuators->setPusherL(160);
+  actuators.setPusherL(RETRACTED);
   delay(1000);
 
-  actuators->setPusherR(30);
+  actuators.setPusherR(DEPLOYED);
   delay(1000);
-  actuators->setPusherR(160);
+  actuators.setPusherR(DEPLOYED);
   delay(1000);
   
   delay(4000);

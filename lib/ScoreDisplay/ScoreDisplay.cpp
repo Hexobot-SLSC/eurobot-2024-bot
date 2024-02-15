@@ -2,7 +2,9 @@
 #include <ScoreDisplay.h>
 #include <TM1637Display.h>
 
-ScoreDisplay::ScoreDisplay(): display(12, 13) {};
+TM1637Display ScoreDisplay::display(4, 5);
+
+ScoreDisplay::ScoreDisplay() {}
 
 void ScoreDisplay::setup() {
     const uint8_t middleBar[1] = {SEG_G};

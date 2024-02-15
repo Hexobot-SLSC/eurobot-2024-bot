@@ -8,21 +8,23 @@
 
 const char MOTORS_POWER (MOVERS_POWER_PRCT / 100.0 * 127);
 
-Movers::Movers():
-    sabertoothRightSerial(NOT_A_PIN, 18),
-    sabertoothLeftSerial(NOT_A_PIN, 16),
-    sabertoothRight(sabertoothRightSerial),
-    sabertoothLeft(sabertoothLeftSerial) {}
+SoftwareSerial Movers::sabertoothRightSerial(NOT_A_PIN, 18);
+SoftwareSerial Movers::sabertoothLeftSerial(NOT_A_PIN, 16);
+SabertoothSimplified Movers::sabertoothRight(sabertoothRightSerial);
+SabertoothSimplified Movers::sabertoothLeft(sabertoothLeftSerial);
+
+Movers::Movers() {}
 
 void Movers::setup() {
     sabertoothLeftSerial.begin(9600);
     sabertoothRightSerial.begin(9600);
+    
 }
 
-void Movers::drive(JoystickData *joystickData) {
-    char speed = map(joystickData->holonomY, 0, 255, -MOTORS_POWER, MOTORS_POWER);
-    char turn = -map(joystickData->x, 0, 255, -MOTORS_POWER, MOTORS_POWER);
-    char strafe = map(joystickData->holonomX, 0, 255, -MOTORS_POWER, MOTORS_POWER);
+void Movers::drive(JoystickData joystickData) {
+    char speed = map(joystickData.holonomY, 0, 255, -MOTORS_POWER, MOTORS_POWER);
+    char turn = -map(joystickData.x, 0, 255, -MOTORS_POWER, MOTORS_POWER);
+    char strafe = map(joystickData.holonomX, 0, 255, -MOTORS_POWER, MOTORS_POWER);
 
     this->setFR((speed - turn * 0.8 - strafe * 1.45) / 2);
     this->setFL((speed + turn * 0.8 + strafe * 1.45) / 2);

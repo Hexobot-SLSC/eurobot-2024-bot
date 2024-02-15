@@ -8,6 +8,9 @@
 /* Delay before freezing the bot when none data is received from radio */
 #define RADIO_TIMEOUT 1000
 
+/* The radio address to use. */
+#define RADIO_ADDRESS "912CR"
+
 /* Define wether to enable info logs or not. */
 #define INFO_STATE
 

@@ -5,12 +5,13 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 #include <Logging.h>
+#include <Config.h>
 
 Remote::Remote(): radio(7, 8) {};
 
 void Remote::setup() {
-    const byte readingAddress[6] = "912CR";
-
+    const byte readingAddress[6] = RADIO_ADDRESS;
+    
     radio.begin();
     radio.setChannel(110);
     radio.setPALevel(RF24_PA_LOW);
@@ -24,7 +25,7 @@ void Remote::fetch(RadioData *dataBuffer) {
     radio.read(dataBuffer, sizeof(*dataBuffer));
 }
 
-void Remote::print_details() {
+void Remote::printDetails() {
     radio.printDetails();
 }
 
