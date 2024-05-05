@@ -22,7 +22,7 @@ Must be disabled for normal usage */
 //#define TEST_MODE
 
 /* Pourcentage of power for mover motors*/
-#define MOVERS_POWER_PRCT 70.0
+#define MOVERS_POWER_PRCT 100.0
 
 /* The default score to display on the robot.
 Cannot disable. */
@@ -39,6 +39,20 @@ risks devices damages and power supply issues.
 ----------------------------------------------------------------
 Cannot disable. */
 #define HEARTBEAT_DELAY 50
+
+// IO //
+
+#define RADIO_CE 7
+#define RADIO_CSN 8
+
+#define LEFT_PUSHER NOT_A_PIN
+#define RIGHT_PUSHER NOT_A_PIN
+
+#define LEFT_SBR 3
+#define RIGHT_SBR 6
+
+#define SCORE_DIO A0
+#define SCORE_CLK A1
 
 // END USER DEFINED //
 

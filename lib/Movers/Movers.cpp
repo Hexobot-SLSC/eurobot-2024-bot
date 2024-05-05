@@ -8,8 +8,8 @@
 
 const char MOTORS_POWER (MOVERS_POWER_PRCT / 100.0 * 127);
 
-SoftwareSerial Movers::sabertoothRightSerial(NOT_A_PIN, 18);
-SoftwareSerial Movers::sabertoothLeftSerial(NOT_A_PIN, 16);
+SoftwareSerial Movers::sabertoothRightSerial(NOT_A_PIN, RIGHT_SBR);
+SoftwareSerial Movers::sabertoothLeftSerial(NOT_A_PIN, LEFT_SBR);
 SabertoothSimplified Movers::sabertoothRight(sabertoothRightSerial);
 SabertoothSimplified Movers::sabertoothLeft(sabertoothLeftSerial);
 
@@ -26,10 +26,10 @@ void Movers::drive(JoystickData joystickData) {
     char turn = -map(joystickData.x, 0, 255, -MOTORS_POWER, MOTORS_POWER);
     char strafe = map(joystickData.holonomX, 0, 255, -MOTORS_POWER, MOTORS_POWER);
 
-    this->setFR((speed - turn * 0.8 - strafe * 1.45) / 2);
-    this->setFL((speed + turn * 0.8 + strafe * 1.45) / 2);
-    this->setBR((speed - turn * 0.8 + strafe * 1.45) / 2);
-    this->setBL((speed + turn * 0.8 - strafe * 1.45) / 2);
+    this->setFR((speed - turn * 0.8 - strafe * 2) / 2);
+    this->setFL((speed + turn * 0.8 + strafe * 2) / 2);
+    this->setBR((speed - turn * 0.8 + strafe * 2) / 2);
+    this->setBL((speed + turn * 0.8 - strafe * 2) / 2);
 }
 
 

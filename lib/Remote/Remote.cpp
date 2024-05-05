@@ -7,10 +7,10 @@
 #include <Logging.h>
 #include <Config.h>
 
-Remote::Remote(): radio(7, 8) {};
+Remote::Remote(): radio(RADIO_CE, RADIO_CSN) {};
 
 void Remote::setup() {
-    const byte readingAddress[6] = RADIO_ADDRESS;
+    const byte readingAddress[6] = "912CR";
     
     radio.begin();
     radio.setChannel(110);
@@ -27,6 +27,11 @@ void Remote::fetch(RadioData *dataBuffer) {
 
 void Remote::printDetails() {
     radio.printDetails();
+}
+
+void Remote::restart() {
+    radio.stopListening();
+    radio.startListening();
 }
 
 bool Remote::hasData() {

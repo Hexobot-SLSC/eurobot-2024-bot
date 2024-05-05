@@ -56,13 +56,13 @@ void setup() {
 
   log("Robot ready!");
 
-  #ifdef DEBUG_STATE
+  #ifdef INFO_STATE
   remote.printDetails();
   #endif
 
   #ifdef TEST_MODE
   log("Running Test Mode");
-  while(true) run_test(&movers, &actuators);
+  while(true) run_test(movers, actuators);
   #endif
 }
 
@@ -80,6 +80,7 @@ void loop() {
       debug("No data received for too long. Stopping robot.");
       movers.stop();
       actuators.reset();
+      remote.restart();
       lastNoDataTimestamp = 0;
     }
     return;

@@ -21,10 +21,10 @@ void Actuators::setup() {
     // grabberOpeningServo.attach(GRABBER_OPENING_SERVO_PIN); // Pin
     // grabberOpeningServo.write(0);
 
-    pushersServos[0].attach(LEFT_PUSHER_SERVO_PIN); // Pin
+    pushersServos[0].attach(LEFT_PUSHER); // Pin
     this->setPusherL(RETRACTED);
 
-    pushersServos[1].attach(RIGHT_PUSHER_SERVO_PIN); // Pin
+    pushersServos[1].attach(RIGHT_PUSHER); // Pin
     this->setPusherR(RETRACTED);
 }
 

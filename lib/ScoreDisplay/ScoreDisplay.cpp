@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <ScoreDisplay.h>
 #include <TM1637Display.h>
+#include <Config.h>
 
-TM1637Display ScoreDisplay::display(4, 5);
+TM1637Display ScoreDisplay::display(SCORE_CLK, SCORE_DIO);
 
 ScoreDisplay::ScoreDisplay() {}
 

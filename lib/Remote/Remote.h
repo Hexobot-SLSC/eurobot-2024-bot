@@ -14,6 +14,7 @@ class Remote {
         bool hasData();
         void fetch(RadioData *dataBuffer);
         void printDetails();
+        void restart();
     
     private:
         RF24 radio;
