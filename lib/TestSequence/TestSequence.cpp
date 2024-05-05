@@ -6,10 +6,10 @@
 void run_test(Movers movers, Actuators actuators) {
   debug("Going forward");
 
-  movers.setFR(50);
-  movers.setFL(50);
-  movers.setBR(50);
-  movers.setBL(50);
+  movers.setFR(127);
+  movers.setFL(127);
+  movers.setBR(127);
+  movers.setBL(127);
 
   delay(2500);
 
@@ -21,10 +21,10 @@ void run_test(Movers movers, Actuators actuators) {
 
   debug("Going backwards");
 
-  movers.setFR(-50);
-  movers.setFL(-50);
-  movers.setBR(-50);
-  movers.setBL(-50);
+  movers.setFR(-127);
+  movers.setFL(-127);
+  movers.setBR(-127);
+  movers.setBL(-127);
 
   delay(2500);
 
@@ -36,10 +36,10 @@ void run_test(Movers movers, Actuators actuators) {
 
   debug("Turn left");
 
-  movers.setFR(-50);
-  movers.setBR(-50);
-  movers.setFL(50);
-  movers.setBL(50);
+  movers.setFR(-127);
+  movers.setBR(-127);
+  movers.setFL(127);
+  movers.setBL(127);
 
   delay(2500);
 
@@ -51,10 +51,10 @@ void run_test(Movers movers, Actuators actuators) {
 
   debug("Turn right");
 
-  movers.setFR(50);
-  movers.setBR(50);
-  movers.setFL(-50);
-  movers.setBL(-50);
+  movers.setFR(127);
+  movers.setBR(127);
+  movers.setFL(-127);
+  movers.setBL(-127);
 
   delay(2500);
 
@@ -66,19 +66,19 @@ void run_test(Movers movers, Actuators actuators) {
 
   debug("Pan right");
 
-  movers.setFR(-90);
-  movers.setFL(90);
-  movers.setBR(90);
-  movers.setBL(-90);
+  movers.setFR(-127);
+  movers.setFL(127);
+  movers.setBR(127);
+  movers.setBL(-127);
 
   delay(2500);
   
   debug("Pan left");
 
-  movers.setFR(90);
-  movers.setFL(-90);
-  movers.setBR(-90);
-  movers.setBL(90);
+  movers.setFR(127);
+  movers.setFL(-127);
+  movers.setBR(-127);
+  movers.setBL(127);
 
   delay(2500);
 

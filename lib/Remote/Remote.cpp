@@ -9,16 +9,20 @@
 
 Remote::Remote(): radio(RADIO_CE, RADIO_CSN) {};
 
-void Remote::setup() {
+bool Remote::setup() {
     const byte readingAddress[6] = "912CR";
+    bool result;
+
+    result = radio.begin();
     
-    radio.begin();
     radio.setChannel(110);
     radio.setPALevel(RF24_PA_LOW);
     radio.setDataRate(RF24_2MBPS);
     radio.openReadingPipe(0, readingAddress); // address
 
     radio.startListening();
+
+    return result;
 }
 
 void Remote::fetch(RadioData *dataBuffer) {

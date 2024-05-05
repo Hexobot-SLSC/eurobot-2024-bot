@@ -6,11 +6,12 @@
 
 class ScoreDisplay {
     private:
-        static TM1637Display display;
+        TM1637Display display;
     public:
         ScoreDisplay();
 
         void setup();
+        void set(byte number);
         void update(byte score);
 
 };

@@ -4,11 +4,12 @@
 #include <Actuators.h>
 #include <ActuatorsConfig.h>
 #include <Logging.h>
-
+#include <Config.h>
+ 
 Servo Actuators::pushersServos[2];
 Servo Actuators::rodServo;
-// Servo Actuators::grabberHeightServo;
-// Servo Actuators::grabberOpeningServo;
+Servo Actuators::grabberHeightServo;
+Servo Actuators::grabberOpeningServo;
 
 Actuators::Actuators() {};
 
@@ -18,8 +19,8 @@ void Actuators::setup() {
     // grabberHeightServo.attach(GRABBER_HEIGHT_SERVO_PIN); // Pin
     // grabberHeightServo.write(0);
 
-    // grabberOpeningServo.attach(GRABBER_OPENING_SERVO_PIN); // Pin
-    // grabberOpeningServo.write(0);
+    grabberOpeningServo.attach(LEFT_GRABBER_OPEN_SERVO); // Pin
+    grabberOpeningServo.write(0);
 
     pushersServos[0].attach(LEFT_PUSHER); // Pin
     this->setPusherL(RETRACTED);
@@ -47,6 +48,8 @@ void Actuators::update(RadioData newData, RadioData currentData) {
   if (newData.isRightPusherDeployed != currentData.isRightPusherDeployed) {
     this->setPusherR(newData.isRightPusherDeployed ? DEPLOYED : RETRACTED);
   }
+
+  grabberOpeningServo.write(map(newData.grabberOpeningAngle, 0, 255, 0, 180));
 }
 
 void Actuators::setPusherL(PusherState state) {

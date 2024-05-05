@@ -3,14 +3,15 @@
 #include <TM1637Display.h>
 #include <Config.h>
 
-TM1637Display ScoreDisplay::display(SCORE_CLK, SCORE_DIO);
-
-ScoreDisplay::ScoreDisplay() {}
+ScoreDisplay::ScoreDisplay(): display(SCORE_CLK, SCORE_DIO) {};
 
 void ScoreDisplay::setup() {
-    const uint8_t middleBar[1] = {SEG_G};
     display.setBrightness(0x0f);
-    display.setSegments(middleBar, 4, 0);
+    display.showNumberDec(0, true);
+}
+
+void ScoreDisplay::set(byte number) {
+    display.showNumberDec(number, true);
 }
 
 void ScoreDisplay::update(byte score) {

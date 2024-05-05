@@ -42,17 +42,19 @@ Cannot disable. */
 
 // IO //
 
-#define RADIO_CE 7
-#define RADIO_CSN 8
+#define RADIO_CE 9
+#define RADIO_CSN 10 
 
-#define LEFT_PUSHER NOT_A_PIN
-#define RIGHT_PUSHER NOT_A_PIN
+#define LEFT_PUSHER 5
+#define RIGHT_PUSHER 6
+ 
+#define LEFT_SBR 2
+#define RIGHT_SBR 3
 
-#define LEFT_SBR 3
-#define RIGHT_SBR 6
+#define SCORE_DIO 5
+#define SCORE_CLK 4
 
-#define SCORE_DIO A0
-#define SCORE_CLK A1
+#define LEFT_GRABBER_OPEN_SERVO A6
 
 // END USER DEFINED //
 

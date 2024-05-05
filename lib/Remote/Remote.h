@@ -10,7 +10,7 @@ class Remote {
     public:
         Remote();
 
-        void setup();
+        bool setup();
         bool hasData();
         void fetch(RadioData *dataBuffer);
         void printDetails();

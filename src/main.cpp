@@ -51,7 +51,17 @@ void setup() {
   actuators.setup();
   debug("Actuators setup completed");
 
-  remote.setup();
+  bool remoteSuccess = false;
+  while (!remoteSuccess) {
+    remoteSuccess = remote.setup();
+    if (!remoteSuccess) {
+      log("Remote setup failed, retrying in 5 seconds...");
+      for (byte i = 0; i < 5; i++) {
+        scoreDisplay.set(5 - i);
+        delay(1000);
+      }
+    }
+  }
   debug("Remote setup completed");
 
   log("Robot ready!");
@@ -98,9 +108,9 @@ void loop() {
 }
 
 void applyDataChanges(RadioData newData) {
-  // if (newData->score != currentData.score) {
-  //   scoreDisplay.update(newData->score);
-  // }
+  if (newData.score != currentData.score) {
+    scoreDisplay.update(newData.score);
+  }
 
   actuators.update(newData, currentData);
 
