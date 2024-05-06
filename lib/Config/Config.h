@@ -45,16 +45,17 @@ Cannot disable. */
 #define RADIO_CE 9
 #define RADIO_CSN 10 
 
-#define LEFT_PUSHER 5
-#define RIGHT_PUSHER 6
+#define LEFT_PUSHER NOT_A_PIN
+#define RIGHT_PUSHER NOT_A_PIN
  
-#define LEFT_SBR 2
-#define RIGHT_SBR 3
+#define LEFT_SBR 4
+#define RIGHT_SBR 5
 
-#define SCORE_DIO 5
-#define SCORE_CLK 4
+#define SCORE_DIO 3
+#define SCORE_CLK 2
 
-#define LEFT_GRABBER_OPEN_SERVO A6
+#define LEFT_GRABBER_HEIGHT_SERVO NOT_A_PIN
+#define RIGHT_GRABBER_HEIGHT_SERVO NOT_A_PIN 
 
 // END USER DEFINED //
 

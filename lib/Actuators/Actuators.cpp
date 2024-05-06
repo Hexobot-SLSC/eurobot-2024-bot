@@ -5,33 +5,35 @@
 #include <ActuatorsConfig.h>
 #include <Logging.h>
 #include <Config.h>
+
+#define LEFT 0
+#define RIGHT 1
  
 Servo Actuators::pushersServos[2];
-Servo Actuators::rodServo;
-Servo Actuators::grabberHeightServo;
-Servo Actuators::grabberOpeningServo;
+Servo Actuators::grabberHeightServo[2];
+Servo Actuators::grabberOpeningServo[2];
 
 Actuators::Actuators() {};
 
 void Actuators::setup() {
     // pinMode(MAGNETS_PIN, OUTPUT);
 
-    // grabberHeightServo.attach(GRABBER_HEIGHT_SERVO_PIN); // Pin
-    // grabberHeightServo.write(0);
+    grabberHeightServo[LEFT].attach(LEFT_GRABBER_HEIGHT_SERVO); // Pin
+    grabberHeightServo[LEFT].write(0);
+    
+    grabberHeightServo[RIGHT].attach(RIGHT_GRABBER_HEIGHT_SERVO); // Pin
+    grabberHeightServo[RIGHT].write(180);
 
-    grabberOpeningServo.attach(LEFT_GRABBER_OPEN_SERVO); // Pin
-    grabberOpeningServo.write(0);
-
-    pushersServos[0].attach(LEFT_PUSHER); // Pin
+    pushersServos[LEFT].attach(LEFT_PUSHER); // Pin
     this->setPusherL(RETRACTED);
 
-    pushersServos[1].attach(RIGHT_PUSHER); // Pin
+    pushersServos[RIGHT].attach(RIGHT_PUSHER); // Pin
     this->setPusherR(RETRACTED);
 }
 
 void Actuators::reset() {
-    // grabberHeightServo.write(0);
-    // grabberOpeningServo.write(0);
+    grabberHeightServo[LEFT].write(0);
+    grabberHeightServo[RIGHT].write(180);
 
     this->setPusherL(RETRACTED);
     this->setPusherR(RETRACTED);
@@ -49,13 +51,15 @@ void Actuators::update(RadioData newData, RadioData currentData) {
     this->setPusherR(newData.isRightPusherDeployed ? DEPLOYED : RETRACTED);
   }
 
-  grabberOpeningServo.write(map(newData.grabberOpeningAngle, 0, 255, 0, 180));
+  byte height = map(newData.grabberOpeningAngle, 0, 255, 0, 180);
+  grabberHeightServo[LEFT].write(height);
+  grabberHeightServo[RIGHT].write(180 - height);
 }
 
 void Actuators::setPusherL(PusherState state) {
-  pushersServos[0].write(state == DEPLOYED ? LEFT_PUSHER_DEPLOYED : LEFT_PUSHER_RETRACTED);
+  pushersServos[LEFT].write(state == DEPLOYED ? LEFT_PUSHER_DEPLOYED : LEFT_PUSHER_RETRACTED);
 }
 
 void Actuators::setPusherR(PusherState state) {
-  pushersServos[1].write(state == DEPLOYED ? RIGHT_PUSHER_DEPLOYED : RIGHT_PUSHER_RETRACTED);
+  pushersServos[RIGHT].write(state == DEPLOYED ? RIGHT_PUSHER_DEPLOYED : RIGHT_PUSHER_RETRACTED);
 }

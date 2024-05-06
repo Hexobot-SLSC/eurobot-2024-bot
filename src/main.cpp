@@ -56,6 +56,9 @@ void setup() {
     remoteSuccess = remote.setup();
     if (!remoteSuccess) {
       log("Remote setup failed, retrying in 5 seconds...");
+      #ifdef INFO_STATE
+      remote.printDetails();
+        #endif
       for (byte i = 0; i < 5; i++) {
         scoreDisplay.set(5 - i);
         delay(1000);
@@ -65,10 +68,6 @@ void setup() {
   debug("Remote setup completed");
 
   log("Robot ready!");
-
-  #ifdef INFO_STATE
-  remote.printDetails();
-  #endif
 
   #ifdef TEST_MODE
   log("Running Test Mode");
@@ -108,7 +107,7 @@ void loop() {
 }
 
 void applyDataChanges(RadioData newData) {
-  if (newData.score != currentData.score) {
+  if (newData.score != currentData.score && newData.score != 0) {
     scoreDisplay.update(newData.score);
   }
 

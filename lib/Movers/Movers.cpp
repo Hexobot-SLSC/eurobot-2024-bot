@@ -26,13 +26,13 @@ void Movers::drive(JoystickData joystickData) {
     char turn = -map(joystickData.x, 0, 255, -MOTORS_POWER, MOTORS_POWER);
     char strafe = map(joystickData.holonomX, 0, 255, -MOTORS_POWER, MOTORS_POWER);
 
-    this->setFR((speed - turn * 0.8 - strafe * 2) / 2);
-    this->setFL((speed + turn * 0.8 + strafe * 2) / 2);
-    this->setBR((speed - turn * 0.8 + strafe * 2) / 2);
-    this->setBL((speed + turn * 0.8 - strafe * 2) / 2);
+    this->setFR((speed * 1.5 - turn * 0.8 - strafe * 2) / 2);
+    this->setFL((speed * 1.5 + turn * 0.8 + strafe * 2) / 2);
+    this->setBR((speed * 1.5 - turn * 0.8 + strafe * 2) / 2);
+    this->setBL((speed * 1.5 + turn * 0.8 - strafe * 2) / 2);
 }
 
-
+  
 void Movers::stop() {
     sabertoothLeft.stop();
     sabertoothRight.stop();

@@ -12,9 +12,8 @@ enum PusherState {
 class Actuators {
     private:
         static Servo pushersServos[2];
-        static Servo rodServo;
-        static Servo grabberHeightServo;
-        static Servo grabberOpeningServo;
+        static Servo grabberHeightServo[2];
+        static Servo grabberOpeningServo[2];
     public:
         Actuators();
 
